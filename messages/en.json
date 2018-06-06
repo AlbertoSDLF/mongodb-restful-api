@@ -1,0 +1,10 @@
+{
+	"200.createdId": "New %s created with id %s",
+	"400.default": "Your request couldn't be understood",
+	"400.invalidId": "The specified id is invalid",
+	"401.default": "No valid credentials found in the request",
+	"404.entityNotFound": "%s with id %s doesn't exist",
+	"404.default": "No resource was found that matches the request URI",
+    "500.default": "Your request couldn't be processed",
+    "validation.mandatoryField": "Mandatory field"
+}
