@@ -14,7 +14,7 @@ export default class ResponseLoggingFilter extends GenericController {
             if (statusCodeMatch) {
                 logger.info(`${response.locals.requestId} => OK`);
             } else {
-            /* tslint:disable:max-line-length */
+                /* tslint:disable:max-line-length */
                 logger.warn(`${response.locals.requestId} => NOT_OK ${response.statusCode} ${response.locals.errorDescription}`);
             }
             next();
