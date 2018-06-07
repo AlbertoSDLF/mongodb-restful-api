@@ -11,6 +11,7 @@ export default class ErrorController extends GenericController {
 
     public createRoutes(app: Application) {
         app.use(this.contextPath, (error: Error, request: Request, response: Response, next: NextFunction) => {
+            // Used by responseLoggingFilter
             let errorDescription: string;
             if (error.message.startsWith("JwtValidation")) {
                 response.status(HttpStatus.UNAUTHORIZED).json(GenericResponse.getDefault(401, request));
