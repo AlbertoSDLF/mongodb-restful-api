@@ -4,6 +4,7 @@ import { InversifyRestifyServer, TYPE, interfaces } from 'inversify-restify-util
 import * as mongoose from "mongoose";
 import * as logger from "winston";
 import ContactController from "./controller/contactController";
+import EntityModel from "./model/entityModel";
 
 export default class AppBootstrap {
     private app: any;
@@ -12,7 +13,8 @@ export default class AppBootstrap {
     public initialize(): any {
         let container: Container = new Container();
         container.bind<interfaces.Controller>(TYPE.Controller).to(
-            ContactController).whenTargetNamed('ContactController');
+            ContactController).whenTargetNamed("ContactController");
+            container.bind("EntityModel").to(EntityModel);
         let server: InversifyRestifyServer = new InversifyRestifyServer(container);
         this.app = server.build();
         this.configure();
