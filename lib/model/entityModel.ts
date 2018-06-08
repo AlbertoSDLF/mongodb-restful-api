@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-export default class GenericModel {
+export default class EntityModel {
     protected readonly name: string;
     protected readonly schema: Schema;
     protected readonly dbCollectionName: string;

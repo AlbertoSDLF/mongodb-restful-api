@@ -1,5 +1,5 @@
 import * as changeCaseObject from "change-case-object";
-import { Request } from "express";
+import { Request } from "restify";
 import * as HttpStatus from "http-status-codes";
 import * as i18n from "i18n";
 

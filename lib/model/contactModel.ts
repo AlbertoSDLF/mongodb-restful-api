@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
-import GenericModel from "./genericModel";
+import EntityModel from "./entityModel";
 
-export default class ContactModel extends GenericModel {
+export default class ContactModel extends EntityModel {
     public static schema: Schema = new Schema({
         first_name: {
             type: String,

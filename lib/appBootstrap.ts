@@ -1,32 +1,27 @@
-import * as bodyParser from "body-parser";
-import GenericController from "controller/genericController";
-import * as express from "express";
 import * as i18n from "i18n";
+import { Container } from 'inversify';
+import { InversifyRestifyServer, TYPE, interfaces } from 'inversify-restify-utils';
 import * as mongoose from "mongoose";
 import * as logger from "winston";
-import ErrorController from "./controller/errorController";
-import GenericEntityController from "./controller/genericEntityController";
-import JwtValidationFilter from "./controller/JwtValidationFilter";
-import RequestLoggingFilter from "./controller/RequestLoggingFilter";
-import ResponseLoggingFilter from "./controller/ResponseLoggingFilter";
-import ContactModel from "./model/contactModel";
+import ContactController from "./controller/contactController";
 
-class App {
-    public readonly app: express.Application;
+export default class AppBootstrap {
+    private app: any;
     private readonly mongoUrl: string = "mongodb://localhost/nodejs";
 
-    constructor() {
-        this.app = express();
+    public initialize(): any {
+        let container: Container = new Container();
+        container.bind<interfaces.Controller>(TYPE.Controller).to(
+            ContactController).whenTargetNamed('ContactController');
+        let server: InversifyRestifyServer = new InversifyRestifyServer(container);
+        this.app = server.build();
         this.configure();
         this.setupMongoDb();
-        this.setupControllers();
+        return this.app;
     }
 
     private configure(): void {
         this.configureLogger();
-        this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({ extended: false }));
-        this.app.use(express.static("public"));
         i18n.configure({
             locales: ["en"],
             directory: "messages",
@@ -76,9 +71,10 @@ class App {
         });
         mongoose.connection.on("error", (error) => {
             logger.error(`DB connection failed with error: ${error}`);
+            process.exit();
         });
         mongoose.connection.on("disconnected", () => {
-            logger.error("DB connection finished");
+            logger.info("DB connection finished");
         });
         mongoose.connect(this.mongoUrl, {
             autoIndex: false, // Don't build indexes
@@ -90,20 +86,4 @@ class App {
             reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
         });
     }
-
-    private setupControllers() {
-        // Order of controllers in the array is important
-        const controllers: GenericController[] = [
-            new RequestLoggingFilter("/"),
-            new JwtValidationFilter("/api"),
-            new GenericEntityController("/api/contact", new ContactModel()),
-            new ErrorController(),
-            new ResponseLoggingFilter("/"),
-        ];
-        controllers.forEach((controller: GenericController) => {
-            controller.createRoutes(this.app);
-        });
-    }
 }
-
-export default new App().app;
