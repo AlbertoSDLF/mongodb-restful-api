@@ -5,6 +5,8 @@ import * as mongoose from "mongoose";
 import * as logger from "winston";
 import ContactController from "./controller/contactController";
 import EntityModel from "./model/entityModel";
+import ContactModel from "./model/contactModel";
+import { ENTITY_TYPE } from "./model/entityType";
 
 export default class AppBootstrap {
     private app: any;
@@ -14,7 +16,7 @@ export default class AppBootstrap {
         let container: Container = new Container();
         container.bind<interfaces.Controller>(TYPE.Controller).to(
             ContactController).whenTargetNamed("ContactController");
-            container.bind("EntityModel").to(EntityModel);
+        container.bind<EntityModel>(ENTITY_TYPE.ContactModel).to(ContactModel);
         let server: InversifyRestifyServer = new InversifyRestifyServer(container);
         this.app = server.build();
         this.configure();

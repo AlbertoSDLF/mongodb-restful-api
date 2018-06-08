@@ -4,10 +4,13 @@
         "moduleResolution": "node",
         "pretty": true,
         "sourceMap": true,
-        "target": "ES6",
+        "target": "es6",
         "outDir": "./dist",
         "baseUrl": "./lib",
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "lib": ["es6"],
+        "types": ["reflect-metadata"]
     },
     "include": [
         "lib/**/*.ts"

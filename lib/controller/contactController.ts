@@ -4,11 +4,13 @@ import EntityModel from "../model/entityModel";
 import "reflect-metadata";
 import { Request, Response } from "restify";
 import GenericEntityRepository from "../repository/genericEntityRepository";
+import { ENTITY_TYPE } from "../model/entityType";
+import ContactModel from "../model/contactModel";
 
 @Controller("/api/contact")
 @injectable()
-export default class ContactController<T extends EntityModel> extends GenericEntityRepository<T> implements interfaces.Controller {
-    constructor(@inject('EntityModel') entityModel: T) {
+export default class ContactController extends GenericEntityRepository<ContactModel> implements interfaces.Controller {
+    constructor(@inject(ENTITY_TYPE.ContactModel) entityModel: ContactModel) {
         super(entityModel);
     }
 
