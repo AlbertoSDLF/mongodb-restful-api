@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+/* import * as chai from 'chai';
 import app from '../lib/app';
 
 chai.use(require('chai-http'));
@@ -69,4 +69,4 @@ entities.forEach(function (entity) {
     after(function () {
         process.exit();
     });
-});
+}); */

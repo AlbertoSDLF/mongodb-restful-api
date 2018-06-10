@@ -8,9 +8,7 @@
         "outDir": "./dist",
         "baseUrl": "./lib",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "lib": ["es6"],
-        "types": ["reflect-metadata"]
+        "emitDecoratorMetadata": true
     },
     "include": [
         "lib/**/*.ts"
