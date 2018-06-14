@@ -6,7 +6,7 @@ import GenericController from "./genericController";
 
 export default class JwtValidationFilter extends GenericController {
     constructor() {
-        super("");
+        super();
     }
     public createRoutes(server: Server) {
         server.pre((request: Request, response: Response, next: NextFunction) => {
