@@ -3,30 +3,30 @@ import EntityModel from "./entityModel";
 
 export default class ContactModel extends EntityModel {
     public static schema: Schema = new Schema({
-        first_name: {
+        company: {
             type: String,
-            required: "Mandatory field",
         },
-        last_name: {
-            type: String,
-            required: "Mandatory field",
+        creation_date: {
+            default: Date.now,
+            type: Date,
         },
         email: {
             type: String,
         },
-        company: {
+        first_name: {
+            required: "Mandatory field",
             type: String,
+        },
+        last_name: {
+            required: "Mandatory field",
+            type: String,
+        },
+        modification_date: {
+            default: Date.now,
+            type: Date,
         },
         phone: {
             type: Number,
-        },
-        creation_date: {
-            type: Date,
-            default: Date.now,
-        },
-        modification_date: {
-            type: Date,
-            default: Date.now,
         },
     });
 

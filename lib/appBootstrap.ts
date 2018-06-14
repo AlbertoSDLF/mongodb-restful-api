@@ -16,6 +16,7 @@ export default class AppBootstrap {
     private readonly mongoUrl: string = "mongodb://localhost/nodejs";
 
     public initialize(): restify.Server {
+        this.configureLogger();
         this.configureServer();
         this.setupMongoDb();
         this.setupControllers();
@@ -24,14 +25,13 @@ export default class AppBootstrap {
 
     private configureServer(): void {
         this.server = restify.createServer();
+        this.server.use(restify.plugins.acceptParser(["application/json"]));
         this.server.use(restifyPlugins.jsonBodyParser({ mapParams: true }));
-        this.server.use(restifyPlugins.acceptParser(this.server.acceptable));
         this.server.use(restifyPlugins.queryParser({ mapParams: true }));
         this.server.use(restifyPlugins.fullResponse());
-        this.configureLogger();
         i18n.configure({
-            locales: ["en"],
             directory: "messages",
+            locales: ["en"],
         });
     }
 
@@ -100,7 +100,7 @@ export default class AppBootstrap {
             new JwtValidationFilter(),
             new ResponseLoggingFilter(),
             new ErrorController(),
-            new GenericEntityController("/api/contact", new ContactModel()),
+            new GenericEntityController<ContactModel>("/api/contact", new ContactModel()),
         ];
         controllers.forEach((controller: GenericController) => {
             controller.createRoutes(this.server);

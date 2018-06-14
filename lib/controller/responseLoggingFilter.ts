@@ -13,7 +13,7 @@ export default class ResponseLoggingFilter extends GenericController {
             // const successStatusCodePattern = /^2\d\d$/g;
             // const statusCodeMatch = successStatusCodePattern.exec(response.statusCode.toString());
             // if (statusCodeMatch) {
-            logger.info(`${response.locals.requestId} => OK`);
+            logger.info(`${request.requestId} => OK`);
             // } else {
             //     /* tslint:disable:max-line-length */
             //     logger.warn(`${response.locals.requestId} => NOT_OK ${response.statusCode} ${response.locals.errorDescription}`);

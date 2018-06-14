@@ -14,7 +14,9 @@ export default class EntityModel {
     public getDbModel(): model {
         return model(this.name, this.schema, this.dbCollectionName);
     }
+
     public getName(): string {
         return this.name;
     }
+
 }

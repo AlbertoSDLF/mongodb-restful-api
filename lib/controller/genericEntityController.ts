@@ -1,6 +1,5 @@
-import { NextFunction, Request, Response } from "express";
 import * as HttpStatus from "http-status-codes";
-import { Server } from "restify";
+import { Next, Request, Response, Server } from "restify";
 import EntityModel from "../model/entityModel";
 import GenericController from "./genericController";
 
@@ -12,29 +11,38 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
         this.model = model;
     }
 
-    public add = (request: Request, response: Response, next: NextFunction): void => {
+    public createRoutes(server: Server): void {
+        server.get(this.contextPath, this.find);
+        server.post(this.contextPath, this.add);
+        server.get(`${this.contextPath}/:id`, this.get);
+        server.put(`${this.contextPath}/:id`, this.update);
+        server.del(`${this.contextPath}/:id`, this.delete);
+    }
+
+    private add = (request: Request, response: Response, next: Next): void => {
         const newEntity = this.model.getDbModel()(request.body);
         newEntity.save((error, createdEntity) => {
             if (error) {
                 next(error);
                 return;
             }
-            response.status(HttpStatus.CREATED).json(createdEntity);
+            response.status(HttpStatus.CREATED);
+            response.send(createdEntity);
             next();
         });
     }
 
-    public find = (request: Request, response: Response, next: NextFunction): void => {
+    private find = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
-                response.send(error);
+                response.json(error);
             }
             response.json(foundEntities);
             next();
         });
     }
 
-    public get = (request: Request, response: Response, next: NextFunction): void => {
+    private get = (request: Request, response: Response, next: Next): void => {
         //        if (!response.headersSent) {
         this.model.getDbModel().findById(request.params.id, (error, retrievedEntity) => {
             if (error) {
@@ -45,13 +53,13 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
                 next(new Error(`EntityNotFound-${this.model.getName()}-${request.params.id}`));
                 return;
             }
-            response.status(HttpStatus.OK).json(retrievedEntity);
+            response.send(retrievedEntity);
             next();
         });
         //        }
     }
 
-    public update = (request: Request, response: Response, next: NextFunction): void => {
+    private update = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().findOneAndUpdate({ _id: request.params.id },
             request.body, { new: true }, (error, updatedEntity) => {
                 if (error) {
@@ -62,7 +70,7 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
             });
     }
 
-    public delete = (request: Request, response: Response, next: NextFunction): void => {
+    private delete = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().remove({ _id: request.params.id }, (error, deletedEntity) => {
             if (error) {
                 response.send(error);
@@ -70,13 +78,5 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
             response.json({ message: "Successfully deleted entity!" });
             next();
         });
-    }
-
-    public createRoutes(server: Server): void {
-        server.get(this.contextPath, this.find);
-        server.post(this.contextPath, this.add);
-        server.get(`${this.contextPath}/:id`, this.get);
-        server.put(`${this.contextPath}/:id`, this.update);
-        server.del(`${this.contextPath}/:id`, this.delete);
     }
 }

@@ -5,6 +5,7 @@
 	"401.default": "No valid credentials found in the request",
 	"404.entityNotFound": "%s with id %s doesn't exist",
 	"404.default": "No resource was found that matches the request URI",
-    "500.default": "Your request couldn't be processed",
-    "validation.mandatoryField": "Mandatory field"
+	"406.default": "No resource was found that matches the request URI",
+	"500.default": "Your request couldn't be processed",
+	"validation.mandatoryField": "Mandatory field"
 }

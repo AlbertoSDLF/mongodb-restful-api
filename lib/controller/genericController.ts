@@ -1,7 +1,7 @@
 import { Server } from "restify";
 
 export default abstract class GenericController {
-    protected contextPath: string = "/";
+    protected contextPath: string;
 
     constructor(contextPath?: string) {
         this.contextPath = contextPath;
