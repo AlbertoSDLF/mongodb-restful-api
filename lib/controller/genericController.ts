@@ -1,4 +1,4 @@
-import { Server } from 'restify';
+import { Server } from "restify";
 
 export default abstract class GenericController {
     protected contextPath: string = "/";

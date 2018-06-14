@@ -1,5 +1,5 @@
 import * as logger from "winston";
-import AppBootstrap  from "./appBootstrap";
+import AppBootstrap from "./appBootstrap";
 
 const port = 3000;
 

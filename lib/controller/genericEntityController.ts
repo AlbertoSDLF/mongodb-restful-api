@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import * as HttpStatus from "http-status-codes";
-import { Server } from 'restify';
-import EntityModel from '../model/entityModel';
-import GenericController from './genericController';
+import { Server } from "restify";
+import EntityModel from "../model/entityModel";
+import GenericController from "./genericController";
 
 export default class GenericEntityController<T extends EntityModel> extends GenericController {
     private model: T;
@@ -76,7 +76,7 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
         server.get(this.contextPath, this.find);
         server.post(this.contextPath, this.add);
         server.get(`${this.contextPath}/:id`, this.get);
-        server.put(`${this.contextPath}/:id`, this.update)
+        server.put(`${this.contextPath}/:id`, this.update);
         server.del(`${this.contextPath}/:id`, this.delete);
     }
 }

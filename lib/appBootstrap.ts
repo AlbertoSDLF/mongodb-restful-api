@@ -1,7 +1,7 @@
 import * as i18n from "i18n";
 import * as mongoose from "mongoose";
-import * as restify from 'restify';
-import * as restifyPlugins from 'restify-plugins';
+import * as restify from "restify";
+import * as restifyPlugins from "restify-plugins";
 import * as logger from "winston";
 import GenericController from "./controller/genericController";
 import GenericEntityController from "./controller/genericEntityController";

@@ -1,7 +1,7 @@
 import * as changeCaseObject from "change-case-object";
-import { Request } from "restify";
 import * as HttpStatus from "http-status-codes";
 import * as i18n from "i18n";
+import { Request } from "restify";
 
 export default class GenericResponse {
     public static getDefault(httpStatus: number, request: Request): GenericResponse {
