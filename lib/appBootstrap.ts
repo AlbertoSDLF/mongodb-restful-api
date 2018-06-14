@@ -6,6 +6,7 @@ import * as logger from "winston";
 import GenericController from "./controller/genericController";
 import GenericEntityController from "./controller/genericEntityController";
 import ContactModel from "./model/contactModel";
+import JwtValidationFilter from "./controller/jwtValidationFilter";
 
 export default class AppBootstrap {
     private server: restify.Server;
@@ -91,8 +92,8 @@ export default class AppBootstrap {
     }
 
     private setupControllers() {
-        // Order of controllers in the array is important
         const controllers: GenericController[] = [
+            new JwtValidationFilter("/"),
             new GenericEntityController("/api/contact", new ContactModel()),
         ];
         controllers.forEach((controller: GenericController) => {
