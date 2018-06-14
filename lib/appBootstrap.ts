@@ -1,11 +1,11 @@
 import * as i18n from "i18n";
 import * as mongoose from "mongoose";
-import * as logger from "winston";
-import ContactController from "./controller/contactController";
-import EntityModel from "./model/entityModel";
-import ContactModel from "./model/contactModel";
 import * as restify from 'restify';
 import * as restifyPlugins from 'restify-plugins';
+import * as logger from "winston";
+import GenericController from "./controller/genericController";
+import GenericEntityController from "./controller/genericEntityController";
+import ContactModel from "./model/contactModel";
 
 export default class AppBootstrap {
     private server: restify.Server;
@@ -19,6 +19,7 @@ export default class AppBootstrap {
         this.server.use(restifyPlugins.fullResponse());
         this.configure();
         this.setupMongoDb();
+        this.setupControllers();
         return this.server;
     }
 
@@ -86,6 +87,16 @@ export default class AppBootstrap {
             poolSize: 100, // Maintain up to 100 socket connections
             reconnectInterval: 500, // Reconnect every 500ms
             reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+        });
+    }
+
+    private setupControllers() {
+        // Order of controllers in the array is important
+        const controllers: GenericController[] = [
+            new GenericEntityController("/api/contact", new ContactModel()),
+        ];
+        controllers.forEach((controller: GenericController) => {
+            controller.createRoutes(this.server);
         });
     }
 }
