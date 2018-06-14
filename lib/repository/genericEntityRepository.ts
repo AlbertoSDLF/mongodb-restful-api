@@ -1,9 +1,7 @@
 import * as HttpStatus from "http-status-codes";
 import EntityModel from "../model/entityModel";
 import { model } from "mongoose";
-import { injectable } from "inversify";
 
-@injectable()
 export default class GenericEntityRepository<T extends EntityModel> {
     private entityModel: T;
 

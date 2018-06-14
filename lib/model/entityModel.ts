@@ -1,7 +1,5 @@
 import { model, Schema } from "mongoose";
-import { injectable } from "inversify";
 
-@injectable()
 export default class EntityModel {
     protected readonly name: string;
     protected readonly schema: Schema;

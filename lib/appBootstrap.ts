@@ -1,27 +1,25 @@
 import * as i18n from "i18n";
-import { Container } from 'inversify';
-import { InversifyRestifyServer, TYPE, interfaces } from 'inversify-restify-utils';
 import * as mongoose from "mongoose";
 import * as logger from "winston";
 import ContactController from "./controller/contactController";
 import EntityModel from "./model/entityModel";
 import ContactModel from "./model/contactModel";
-import { ENTITY_TYPE } from "./model/entityType";
+import * as restify from 'restify';
+import * as restifyPlugins from 'restify-plugins';
 
 export default class AppBootstrap {
-    private app: any;
+    private server: restify.Server;
     private readonly mongoUrl: string = "mongodb://localhost/nodejs";
 
-    public initialize(): any {
-        let container: Container = new Container();
-        container.bind<interfaces.Controller>(TYPE.Controller).to(
-            ContactController).whenTargetNamed("ContactController");
-        container.bind<EntityModel>(ENTITY_TYPE.ContactModel).to(ContactModel);
-        let server: InversifyRestifyServer = new InversifyRestifyServer(container);
-        this.app = server.build();
+    public initialize(): restify.Server {
+        this.server = restify.createServer();
+        this.server.use(restifyPlugins.jsonBodyParser({ mapParams: true }));
+        this.server.use(restifyPlugins.acceptParser( this.server.acceptable));
+        this.server.use(restifyPlugins.queryParser({ mapParams: true }));
+        this.server.use(restifyPlugins.fullResponse());
         this.configure();
         this.setupMongoDb();
-        return this.app;
+        return this.server;
     }
 
     private configure(): void {

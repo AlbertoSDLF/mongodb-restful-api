@@ -1,8 +1,6 @@
 import { Schema } from "mongoose";
 import EntityModel from "./entityModel";
-import { injectable } from "inversify";
 
-@injectable()
 export default class ContactModel extends EntityModel {
     public static schema: Schema = new Schema({
         first_name: {
