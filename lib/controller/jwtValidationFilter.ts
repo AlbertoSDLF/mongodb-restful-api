@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "restify";
-import * as HttpStatus from "http-status-codes";
-import GenericResponse from "../model/genericResponse";
 import GenericController from "./genericController";
 
 export default class JwtValidationFilter extends GenericController {
@@ -28,7 +26,7 @@ export default class JwtValidationFilter extends GenericController {
                     return;
                 }
             }
-            next(new Error(`JwtValidation-${request.params.id}`));
+            next(new Error("JwtValidation"));
         });
     }
 }

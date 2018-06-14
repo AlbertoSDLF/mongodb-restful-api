@@ -5,8 +5,10 @@ import * as restifyPlugins from "restify-plugins";
 import * as logger from "winston";
 import GenericController from "./controller/genericController";
 import GenericEntityController from "./controller/genericEntityController";
-import ContactModel from "./model/contactModel";
 import JwtValidationFilter from "./controller/jwtValidationFilter";
+import RequestLoggingFilter from "./controller/requestLoggingFilter";
+import ResponseLoggingFilter from "./controller/responseLoggingFilter";
+import ContactModel from "./model/contactModel";
 
 export default class AppBootstrap {
     private server: restify.Server;
@@ -93,7 +95,9 @@ export default class AppBootstrap {
 
     private setupControllers() {
         const controllers: GenericController[] = [
-            new JwtValidationFilter("/"),
+            new JwtValidationFilter(),
+            new RequestLoggingFilter(),
+            new ResponseLoggingFilter(),
             new GenericEntityController("/api/contact", new ContactModel()),
         ];
         controllers.forEach((controller: GenericController) => {
