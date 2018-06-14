@@ -10,14 +10,14 @@ export default class ResponseLoggingFilter extends GenericController {
 
     public createRoutes(server: Server) {
         server.use((request: Request, response: Response, next: NextFunction) => {
-            const successStatusCodePattern = /^2\d\d$/g;
-            const statusCodeMatch = successStatusCodePattern.exec(response.statusCode.toString());
-            if (statusCodeMatch) {
-                logger.info(`${response.locals.requestId} => OK`);
-            } else {
-                /* tslint:disable:max-line-length */
-                logger.warn(`${response.locals.requestId} => NOT_OK ${response.statusCode} ${response.locals.errorDescription}`);
-            }
+            // const successStatusCodePattern = /^2\d\d$/g;
+            // const statusCodeMatch = successStatusCodePattern.exec(response.statusCode.toString());
+            // if (statusCodeMatch) {
+            logger.info(`${response.locals.requestId} => OK`);
+            // } else {
+            //     /* tslint:disable:max-line-length */
+            //     logger.warn(`${response.locals.requestId} => NOT_OK ${response.statusCode} ${response.locals.errorDescription}`);
+            // }
             next();
         });
     }

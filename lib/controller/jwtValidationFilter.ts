@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as i18n from "i18n";
 import { Server } from "restify";
-import { InvalidCredentialsError } from "restify-errors";
+import { UnauthorizedError } from "restify-errors";
 import GenericController from "./genericController";
 
 export default class JwtValidationFilter extends GenericController {
@@ -28,7 +28,7 @@ export default class JwtValidationFilter extends GenericController {
                     return;
                 }
             }
-            next(new InvalidCredentialsError(i18n.__("401.default")));
+            next(new UnauthorizedError(i18n.__("401.default")));
         });
     }
 }
