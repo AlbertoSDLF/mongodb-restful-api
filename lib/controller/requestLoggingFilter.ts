@@ -14,8 +14,8 @@ export default class RequestLoggingFilter extends GenericController {
             const requestId = uuid.v1();
             const ip = request.header("X-Forwarded-For") || request.connection.remoteAddress;
             /* tslint:disable:max-line-length */
-            logger.info(`${requestId} => ${request.method} ${request.path} from ${ip} using ${request.header("User-Agent")}`);
-            response.locals.requestId = requestId;
+            logger.info(`${requestId} => ${request.method} ${request.getPath()} from ${ip} using ${request.header("User-Agent")}`);
+            request.requestId = requestId;
             next();
         });
     }

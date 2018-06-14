@@ -3,6 +3,7 @@ import * as mongoose from "mongoose";
 import * as restify from "restify";
 import * as restifyPlugins from "restify-plugins";
 import * as logger from "winston";
+import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
 import GenericEntityController from "./controller/genericEntityController";
 import JwtValidationFilter from "./controller/jwtValidationFilter";
@@ -15,18 +16,18 @@ export default class AppBootstrap {
     private readonly mongoUrl: string = "mongodb://localhost/nodejs";
 
     public initialize(): restify.Server {
-        this.server = restify.createServer();
-        this.server.use(restifyPlugins.jsonBodyParser({ mapParams: true }));
-        this.server.use(restifyPlugins.acceptParser( this.server.acceptable));
-        this.server.use(restifyPlugins.queryParser({ mapParams: true }));
-        this.server.use(restifyPlugins.fullResponse());
-        this.configure();
+        this.configureServer();
         this.setupMongoDb();
         this.setupControllers();
         return this.server;
     }
 
-    private configure(): void {
+    private configureServer(): void {
+        this.server = restify.createServer();
+        this.server.use(restifyPlugins.jsonBodyParser({ mapParams: true }));
+        this.server.use(restifyPlugins.acceptParser(this.server.acceptable));
+        this.server.use(restifyPlugins.queryParser({ mapParams: true }));
+        this.server.use(restifyPlugins.fullResponse());
         this.configureLogger();
         i18n.configure({
             locales: ["en"],
@@ -95,9 +96,10 @@ export default class AppBootstrap {
 
     private setupControllers() {
         const controllers: GenericController[] = [
-            new JwtValidationFilter(),
             new RequestLoggingFilter(),
+            new JwtValidationFilter(),
             new ResponseLoggingFilter(),
+            new ErrorController(),
             new GenericEntityController("/api/contact", new ContactModel()),
         ];
         controllers.forEach((controller: GenericController) => {

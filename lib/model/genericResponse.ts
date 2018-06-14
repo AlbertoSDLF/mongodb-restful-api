@@ -20,7 +20,7 @@ export default class GenericResponse {
         if (moreInformation !== null) {
             this.moreInformation = moreInformation;
         }
-        this.path = `${request.method} ${request.path}`;
+        this.path = `${request.method} ${request.getPath()}`;
         this.timestamp = new Date().toISOString();
     }
 

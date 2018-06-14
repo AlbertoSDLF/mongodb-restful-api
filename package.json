@@ -29,6 +29,7 @@
   "dependencies": {
     "@types/i18n": "^0.8.3",
     "@types/restify": "^7.2.0",
+    "@types/restify-errors": "^4.3.3",
     "body-parser": "^1.18.2",
     "change-case-object": "^2.0.0",
     "express": "^4.16.3",
