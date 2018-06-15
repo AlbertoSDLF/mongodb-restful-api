@@ -1,5 +1,4 @@
-import { NextFunction, Request, Response } from "express";
-import { Server } from "restify";
+import { Next, Request, Response, Server } from "restify";
 import * as logger from "winston";
 import GenericController from "./genericController";
 
@@ -9,15 +8,8 @@ export default class ResponseLoggingFilter extends GenericController {
     }
 
     public createRoutes(server: Server) {
-        server.use((request: Request, response: Response, next: NextFunction) => {
-            // const successStatusCodePattern = /^2\d\d$/g;
-            // const statusCodeMatch = successStatusCodePattern.exec(response.statusCode.toString());
-            // if (statusCodeMatch) {
-            logger.info(`${request.requestId} => OK`);
-            // } else {
-            //     /* tslint:disable:max-line-length */
-            //     logger.warn(`${response.locals.requestId} => NOT_OK ${response.statusCode} ${response.locals.errorDescription}`);
-            // }
+        server.use((request: Request, response: Response, next: Next) => {
+            logger.info(`${request.id()} => OK`);
             next();
         });
     }

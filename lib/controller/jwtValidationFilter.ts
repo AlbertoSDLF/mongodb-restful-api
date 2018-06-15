@@ -15,7 +15,7 @@ export default class JwtValidationFilter extends GenericController {
                 const authorizationHeaderPattern = /Bearer (.+\..+\.\S+)/g;
                 const tokenMatch = authorizationHeaderPattern.exec(authorizationHeader);
                 if (tokenMatch.length === 2) {
-                    // verify(tokenMatch[1], fs.readFileSync('configuration/public.pem'),
+                    // verify(tokenMatch[1], fs.readFileSync('conf/jwtPublicKey.pem'),
                     // { algorithms: ['RS256'], audience: 'intranet-sp-framework' }, function (err, decoded) {
                     //     if (err) {
                     //         return res.json({ message: 'Failed to authenticate token.', details: err });

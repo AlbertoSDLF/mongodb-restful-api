@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Next, Request, Response } from "restify";
 import { Server } from "restify";
 import * as uuid from "uuid";
 import * as logger from "winston";
@@ -10,12 +10,11 @@ export default class RequestLoggingFilter extends GenericController {
     }
 
     public createRoutes(server: Server) {
-        server.pre((request: Request, response: Response, next: NextFunction) => {
+        server.pre((request: Request, response: Response, next: Next) => {
             const requestId = uuid.v1();
             const ip = request.header("X-Forwarded-For") || request.connection.remoteAddress;
             /* tslint:disable:max-line-length */
             logger.info(`${requestId} => ${request.method} ${request.getPath()} from ${ip} using ${request.header("User-Agent")}`);
-            request.requestId = requestId;
             next();
         });
     }

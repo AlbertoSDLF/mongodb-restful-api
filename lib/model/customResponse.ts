@@ -3,9 +3,9 @@ import * as HttpStatus from "http-status-codes";
 import * as i18n from "i18n";
 import { Request } from "restify";
 
-export default class GenericResponse {
-    public static getDefault(httpStatus: number, request: Request): GenericResponse {
-        return new GenericResponse(httpStatus, i18n.__(`${httpStatus}.default`), request);
+export default class CustomResponse {
+    public static getDefault(httpStatus: number, request: Request): CustomResponse {
+        return new CustomResponse(httpStatus, i18n.__(`${httpStatus}.default`), request);
     }
 
     private httpStatus: number;

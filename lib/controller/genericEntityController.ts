@@ -1,6 +1,7 @@
 import * as HttpStatus from "http-status-codes";
 import { Next, Request, Response, Server } from "restify";
 import EntityModel from "../model/entityModel";
+import EntityNotFoundError from "./error/entityNotFoundError";
 import GenericController from "./genericController";
 
 export default class GenericEntityController<T extends EntityModel> extends GenericController {
@@ -35,9 +36,10 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
     private find = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
-                response.json(error);
+                next(error);
+                return;
             }
-            response.json(foundEntities);
+            response.send(foundEntities);
             next();
         });
     }
@@ -50,7 +52,7 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
                 return;
             }
             if (retrievedEntity === null) {
-                next(new Error(`EntityNotFound-${this.model.getName()}-${request.params.id}`));
+                next(new EntityNotFoundError(this.model.getName(), request.params.id));
                 return;
             }
             response.send(retrievedEntity);
@@ -63,9 +65,10 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
         this.model.getDbModel().findOneAndUpdate({ _id: request.params.id },
             request.body, { new: true }, (error, updatedEntity) => {
                 if (error) {
-                    response.send(error);
+                    next(error);
+                    return;
                 }
-                response.json(updatedEntity);
+                response.send(updatedEntity);
                 next();
             });
     }
@@ -73,9 +76,10 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
     private delete = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().remove({ _id: request.params.id }, (error, deletedEntity) => {
             if (error) {
-                response.send(error);
+                next(error);
+                return;
             }
-            response.json({ message: "Successfully deleted entity!" });
+            response.send({ message: "Successfully deleted entity!" });
             next();
         });
     }
