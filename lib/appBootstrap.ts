@@ -100,7 +100,7 @@ export default class AppBootstrap {
             // new JwtValidationFilter(),
             new ResponseLoggingFilter(),
             new ErrorController(),
-            new GenericEntityController<ContactModel>("/api/contact", new ContactModel()),
+            new GenericEntityController("/api/contact", new ContactModel()),
         ];
         controllers.forEach((controller: GenericController) => {
             controller.createRoutes(this.server);

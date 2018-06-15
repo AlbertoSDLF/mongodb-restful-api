@@ -5,16 +5,17 @@ import EntityNotFoundError from "./error/entityNotFoundError";
 import MongodbError from "./error/mongodbError";
 import GenericController from "./genericController";
 
-export default class GenericEntityController<T extends EntityModel> extends GenericController {
-    private model: T;
+export default class GenericEntityController extends GenericController {
+    private model: EntityModel;
 
-    constructor(contextPath: string, model: T) {
+    constructor(contextPath: string, model: EntityModel) {
         super(contextPath);
         this.model = model;
     }
 
     public createRoutes(server: Server): void {
         server.get(this.contextPath, this.find);
+        server.get(`${this.contextPath}/count`, this.count);
         server.post(this.contextPath, this.add);
         server.get(`${this.contextPath}/:id`, this.get);
         server.get(`${this.contextPath}/:id/exists`, this.exists);
@@ -36,6 +37,11 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
     }
 
     private find = (request: Request, response: Response, next: Next): void => {
+        const pageNumber: number = +request.header("page-number");
+        const pageSize: number = +request.header("page-size");
+        const skip = (pageNumber - 1) * pageSize;
+        const sort: string = request.header("sort");
+        const sortOrder: number = +request.header("sort-order");
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
                 next(new MongodbError(this.model.getName(), error.name, error.message));
@@ -44,7 +50,19 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
             response.status(HttpStatus.OK);
             response.send(foundEntities);
             next();
-        });
+        }).limit(pageSize).skip(skip).sort({ [sort]: sortOrder });
+    }
+
+    private count = (request: Request, response: Response, next: Next): void => {
+        this.model.getDbModel().find({}, (error, foundEntities) => {
+            if (error) {
+                next(new MongodbError(this.model.getName(), error.name, error.message));
+                return;
+            }
+            response.status(HttpStatus.OK);
+            response.send({ total: Object.keys(foundEntities).length });
+            next();
+        }).select("_id");
     }
 
     private get = (request: Request, response: Response, next: Next): void => {
