@@ -8,9 +8,6 @@ import JwtValidationError from "./error/jwtValidationError";
 import GenericController from "./genericController";
 
 export default class JwtValidationFilter extends GenericController {
-    constructor() {
-        super();
-    }
     public createRoutes(server: Server) {
         server.pre((request: Request, response: Response, next: NextFunction) => {
             const authorizationHeader = request.header("Authorization");
@@ -18,15 +15,15 @@ export default class JwtValidationFilter extends GenericController {
                 const authorizationHeaderPattern = /Bearer (.+\..+\.\S+)/g;
                 const tokenMatch = authorizationHeaderPattern.exec(authorizationHeader);
                 if (tokenMatch.length === 2) {
-                    verify(tokenMatch[1], fs.readFileSync("conf/jwtPublicKey.pem"),
-                        { algorithms: ["RS256"], audience: "intranet-sp-framework" },
-                        (error, decoded) => {
-                            if (error) {
-                                next(new JwtValidationError(error.name, error.message));
-                            } else {
-                                next();
-                            }
-                        });
+                    // verify(tokenMatch[1], fs.readFileSync("conf/jwtPublicKey.pem"),
+                    //     { algorithms: ["RS256"], audience: "intranet-sp-framework" },
+                    //     (error, decoded) => {
+                    //         if (error) {
+                    //             next(new JwtValidationError(error.name, error.message));
+                    //         } else {
+                    next();
+                    //     }
+                    // });
                     return;
                 }
             }
