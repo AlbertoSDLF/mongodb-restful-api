@@ -13,6 +13,9 @@ export default class MongodbError extends InternalError {
             const match = errorMessagePattern.exec(details);
             this.statusCode = HttpStatus.CONFLICT;
             this.message = i18n.__("409.duplicateId", entityName, match[1]);
+        } else if (type === "ValidationError") {
+            this.statusCode = HttpStatus.BAD_REQUEST;
+            this.message = details;
         } else {
             this.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
             this.message = i18n.__("500.default");
