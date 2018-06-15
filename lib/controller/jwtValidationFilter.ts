@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from "express";
+import * as fs from "fs";
 import * as i18n from "i18n";
+import { verify } from "jsonwebtoken";
 import { Server } from "restify";
 import { UnauthorizedError } from "restify-errors";
+import JwtValidationError from "./error/jwtValidationError";
 import GenericController from "./genericController";
 
 export default class JwtValidationFilter extends GenericController {
@@ -15,16 +18,15 @@ export default class JwtValidationFilter extends GenericController {
                 const authorizationHeaderPattern = /Bearer (.+\..+\.\S+)/g;
                 const tokenMatch = authorizationHeaderPattern.exec(authorizationHeader);
                 if (tokenMatch.length === 2) {
-                    // verify(tokenMatch[1], fs.readFileSync('conf/jwtPublicKey.pem'),
-                    // { algorithms: ['RS256'], audience: 'intranet-sp-framework' }, function (err, decoded) {
-                    //     if (err) {
-                    //         return res.json({ message: 'Failed to authenticate token.', details: err });
-                    //     } else {
-                    //         res.locals.jwtPayload = decoded;
-                    //         next();
-                    //     }
-                    // });
-                    next();
+                    verify(tokenMatch[1], fs.readFileSync("conf/jwtPublicKey.pem"),
+                        { algorithms: ["RS256"], audience: "intranet-sp-framework" },
+                        (error, decoded) => {
+                            if (error) {
+                                next(new JwtValidationError(error.name, error.message));
+                            } else {
+                                next();
+                            }
+                        });
                     return;
                 }
             }

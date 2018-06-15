@@ -97,7 +97,7 @@ export default class AppBootstrap {
     private setupControllers() {
         const controllers: GenericController[] = [
             new RequestLoggingFilter(),
-            new JwtValidationFilter(),
+            // new JwtValidationFilter(),
             new ResponseLoggingFilter(),
             new ErrorController(),
             new GenericEntityController<ContactModel>("/api/contact", new ContactModel()),

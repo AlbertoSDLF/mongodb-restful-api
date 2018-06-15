@@ -2,6 +2,7 @@ import * as HttpStatus from "http-status-codes";
 import { Next, Request, Response, Server } from "restify";
 import EntityModel from "../model/entityModel";
 import EntityNotFoundError from "./error/entityNotFoundError";
+import MongodbError from "./error/mongodbError";
 import GenericController from "./genericController";
 
 export default class GenericEntityController<T extends EntityModel> extends GenericController {
@@ -24,7 +25,7 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
         const newEntity = this.model.getDbModel()(request.body);
         newEntity.save((error, createdEntity) => {
             if (error) {
-                next(error);
+                next(new MongodbError(error.name));
                 return;
             }
             response.status(HttpStatus.CREATED);
@@ -36,38 +37,39 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
     private find = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
-                next(error);
+                next(new MongodbError(error.name));
                 return;
             }
+            response.status(HttpStatus.OK);
             response.send(foundEntities);
             next();
         });
     }
 
     private get = (request: Request, response: Response, next: Next): void => {
-        //        if (!response.headersSent) {
         this.model.getDbModel().findById(request.params.id, (error, retrievedEntity) => {
             if (error) {
-                next(error);
+                next(new MongodbError(error.name));
                 return;
             }
             if (retrievedEntity === null) {
                 next(new EntityNotFoundError(this.model.getName(), request.params.id));
                 return;
             }
+            response.status(HttpStatus.OK);
             response.send(retrievedEntity);
             next();
         });
-        //        }
     }
 
     private update = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().findOneAndUpdate({ _id: request.params.id },
             request.body, { new: true }, (error, updatedEntity) => {
                 if (error) {
-                    next(error);
+                    next(new MongodbError(error.name));
                     return;
                 }
+                response.status(HttpStatus.OK);
                 response.send(updatedEntity);
                 next();
             });
@@ -76,10 +78,10 @@ export default class GenericEntityController<T extends EntityModel> extends Gene
     private delete = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().remove({ _id: request.params.id }, (error, deletedEntity) => {
             if (error) {
-                next(error);
+                next(new MongodbError(error.name));
                 return;
             }
-            response.send({ message: "Successfully deleted entity!" });
+            response.send(HttpStatus.NO_CONTENT);
             next();
         });
     }

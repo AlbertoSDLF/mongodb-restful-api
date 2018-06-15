@@ -2,10 +2,14 @@
 	"200.createdId": "New %s created with id %s",
 	"400.default": "Your request couldn't be understood",
 	"400.invalidId": "The specified id is invalid",
+	"401.expiredToken": "JWT has expired",
+	"401.invalidAudience": "JWT has an invalid audience",
+	"401.invalidToken": "This server couldn't verify that you are authorized to access the resource",
 	"401.default": "No valid credentials found in the request",
 	"404.entityNotFound": "%s with id %s doesn't exist",
 	"404.default": "No resource was found that matches the request URI",
-	"406.default": "No resource was found that matches the request URI",
+	"405.default": "The request method is not supported for the requested resource",
+	"406.default": "The return type isn't acceptable to the client. This server can only generate 'application/json'",
 	"500.default": "Your request couldn't be processed",
 	"validation.mandatoryField": "Mandatory field"
 }

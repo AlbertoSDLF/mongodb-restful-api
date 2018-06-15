@@ -7,10 +7,12 @@ import GenericController from "./genericController";
 
 export default class ErrorController extends GenericController {
     public createRoutes(server: Server) {
-        server.on("NotAcceptable", this.defaultHandler(HttpStatus.NOT_ACCEPTABLE));
-        server.on("Unauthorized", this.defaultHandler(HttpStatus.UNAUTHORIZED));
-        server.on("InvalidCredentials", this.defaultHandler(HttpStatus.UNAUTHORIZED));
-        
+        server.on("NotAcceptable", this.defaultMessageHandler);
+        server.on("Unauthorized", this.customMessageHandler);
+        server.on("InvalidCredentials", this.customMessageHandler);
+        server.on("MethodNotAllowed", this.defaultMessageHandler);
+        server.on("Internal", this.customMessageHandler);
+
         server.on("NotFound", (request: Request, response: Response, error, cb): void => {
             logger.warn(`${request.id()} => NOT_OK ${HttpStatus.NOT_FOUND} ${error.message}`);
             error.toJSON = function toJSON() {
@@ -24,14 +26,20 @@ export default class ErrorController extends GenericController {
         });
     }
 
-    private defaultHandler = (httpStatus) => {
-        return (request: Request, response: Response, error, cb): void => {
-            logger.warn(`${request.id()} => NOT_OK ${httpStatus} ${error.message}`);
-            error.toJSON = function toJSON() {
-                return new CustomResponse(httpStatus, error.message, request);
-            };
-            cb();
+    private defaultMessageHandler = (request: Request, response: Response, error, cb): void => {
+        logger.warn(`${request.id()} => NOT_OK ${error.statusCode} ${error.message}`);
+        error.toJSON = function toJSON() {
+            return CustomResponse.getDefault(error.statusCode, request);
         };
+        cb();
+    }
+
+    private customMessageHandler = (request: Request, response: Response, error, cb): void => {
+        logger.warn(`${request.id()} => NOT_OK ${error.statusCode} ${error.message}`);
+        error.toJSON = function toJSON() {
+            return new CustomResponse(error.statusCode, error.message, request);
+        };
+        cb();
     }
 }
 
