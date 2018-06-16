@@ -1,0 +1,28 @@
+version: '3'
+
+volumes:
+  log:
+
+networks:
+  network_mode:
+
+services:
+  node_mongodb_restify:
+    build: .
+    container_name: Node_Mongodb_Restify
+    image: albertosdlf/node-mongodb-restify
+    ports:
+      - "13000:3000"
+    volumes:
+      - log:/usr/src/app/log
+    environment:
+    - mongodbUrl=mongodb://172.17.0.2:27017/nodejs
+    network_mode: bridge
+  alpine:
+    container_name: Alpine
+    image: alpine
+    volumes:
+      - log:/log
+    stdin_open: true
+    tty: true
+    network_mode: bridge

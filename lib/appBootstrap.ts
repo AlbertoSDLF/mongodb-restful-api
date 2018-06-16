@@ -1,3 +1,4 @@
+import * as dotenv from "dotenv";
 import * as i18n from "i18n";
 import * as mongoose from "mongoose";
 import * as restify from "restify";
@@ -6,19 +7,18 @@ import * as logger from "winston";
 import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
 import GenericEntityController from "./controller/genericEntityController";
-import JwtValidationFilter from "./controller/jwtValidationFilter";
 import RequestLoggingFilter from "./controller/requestLoggingFilter";
 import ResponseLoggingFilter from "./controller/responseLoggingFilter";
 import ContactModel from "./model/contactModel";
 
 export default class AppBootstrap {
     private server: restify.Server;
-    private readonly mongoUrl: string = "mongodb://localhost/nodejs";
 
     public initialize(): restify.Server {
+        dotenv.config();
         this.configureLogger();
-        this.configureServer();
         this.setupMongoDb();
+        this.configureServer();
         this.setupControllers();
         return this.server;
     }
@@ -83,7 +83,7 @@ export default class AppBootstrap {
         mongoose.connection.on("disconnected", () => {
             logger.info("DB connection finished");
         });
-        mongoose.connect(this.mongoUrl, {
+        mongoose.connect(process.env.mongodbUrl, {
             autoIndex: false, // Don't build indexes
             bufferCommands: 0,
             bufferMaxEntries: 0, // If not connected, return errors immediately rather than waiting for reconnect
