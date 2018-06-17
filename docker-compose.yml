@@ -3,14 +3,13 @@ version: '3'
 volumes:
   log:
 
-networks:
-  network_mode:
-
 services:
   node_mongodb_restify:
-    build: .
+    build: 
+      context: .
+      dockerfile: ./docker/Dockerfile
     container_name: Node_Mongodb_Restify
-    image: albertosdlf/node-mongodb-restify
+    image: albertosdlf/mongodb-restful-api
     ports:
       - "13000:3000"
     volumes:
@@ -18,11 +17,14 @@ services:
     environment:
     - mongodbUrl=mongodb://172.17.0.2:27017/nodejs
     network_mode: bridge
-  alpine:
-    container_name: Alpine
-    image: alpine
+  filebeat:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-filebeat
+    container_name: Filebeat
+    image: albertosdlf/mongodb-restful-api-filebeat
     volumes:
-      - log:/log
+      - log:/mnt/log
     stdin_open: true
     tty: true
     network_mode: bridge

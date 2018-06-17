@@ -1,0 +1,5 @@
+FROM docker.elastic.co/beats/filebeat:6.3.0
+WORKDIR /usr/share/filebeat
+VOLUME /mnt/log
+COPY ./filebeat/filebeat.yml ./
+RUN ./filebeat modules enable logstash

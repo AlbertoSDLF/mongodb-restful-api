@@ -1,0 +1,22 @@
+filebeat.config:
+  prospectors:
+    path: ${path.config}/prospectors.d/*.yml
+    reload.enabled: false
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+processors:
+- add_cloud_metadata:
+
+filebeat.modules:
+  - module: logstash
+    log:
+      enabled: true
+      var.paths:
+        - /mnt/log/*.log
+
+output.logstash:
+  enabled: true
+  hosts: ["172.17.0.10:5044"]
+  worker: 1

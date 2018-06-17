@@ -1,12 +1,20 @@
 import * as HttpStatus from "http-status-codes";
-import { Request, Response, Server } from "restify";
+import { Next, Request, Response, Server } from "restify";
 import * as logger from "winston";
 import CustomResponse from "../model/customResponse";
 import EntityNotFoundError from "./error/entityNotFoundError";
 import GenericController from "./genericController";
+import LoggerUtils from "./util/loggerUtils";
 
 export default class ErrorController extends GenericController {
     public createRoutes(server: Server) {
+        // Log success responses
+        server.use((request: Request, response: Response, next: Next) => {
+            LoggerUtils.writeLog(request, response, null);
+            next();
+        });
+
+        // Create and log error responses
         server.on("NotAcceptable", this.defaultMessageHandler);
         server.on("Unauthorized", this.customMessageHandler);
         server.on("InvalidCredentials", this.customMessageHandler);
@@ -14,7 +22,7 @@ export default class ErrorController extends GenericController {
         server.on("Internal", this.customMessageHandler);
 
         server.on("NotFound", (request: Request, response: Response, error, cb): void => {
-            logger.warn(`${request.id()} => NOT_OK ${HttpStatus.NOT_FOUND} ${error.message}`);
+            LoggerUtils.writeLog(request, response, error.message);
             error.toJSON = function toJSON() {
                 if (error instanceof EntityNotFoundError) {
                     return new CustomResponse(HttpStatus.NOT_FOUND, error.message, request);
@@ -27,18 +35,19 @@ export default class ErrorController extends GenericController {
     }
 
     private defaultMessageHandler = (request: Request, response: Response, error, cb): void => {
-        logger.warn(`${request.id()} => NOT_OK ${error.statusCode} ${error.message}`);
+        const customError: CustomResponse = CustomResponse.getDefault(error.statusCode, request);
         error.toJSON = function toJSON() {
-            return CustomResponse.getDefault(error.statusCode, request);
+            return customError;
         };
+        LoggerUtils.writeLog(request, response, customError.getMoreInformation());
         cb();
     }
 
     private customMessageHandler = (request: Request, response: Response, error, cb): void => {
-        logger.warn(`${request.id()} => NOT_OK ${error.statusCode} ${error.message}`);
         error.toJSON = function toJSON() {
             return new CustomResponse(error.statusCode, error.message, request);
         };
+        LoggerUtils.writeLog(request, response, error.message);
         cb();
     }
 }

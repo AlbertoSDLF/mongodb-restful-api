@@ -39,35 +39,26 @@ export default class AppBootstrap {
         // Remove default console logger
         logger.remove(logger.transports.Console);
         // And add a custom one replacing it, in non Production environments
-        if (process.env.NODE_ENV !== "production") {
-            logger.add(logger.transports.Console, {
-                json: true,
-                level: "debug",
-                name: "console",
-            });
-        }
-        // Production logger
+        // if (process.env.NODE_ENV !== "production") {
+        logger.add(logger.transports.Console, {
+            json: true,
+            level: "info",
+            name: "console",
+        });
+        // }
         const fs = require("fs");
         const logFolder = "./log";
         if (!fs.existsSync(logFolder)) {
             fs.mkdirSync(logFolder);
         }
         logger.add(logger.transports.File, {
-            filename: `${logFolder}/error.log`,
+            filename: `${logFolder}/node_mongodb_restify.log`,
             json: true,
-            level: "error",
-            maxFiles: "20",
-            maxsize: 5242880, // 5MB
-            name: "error",
-        });
-        logger.add(logger.transports.File, {
-            filename: `${logFolder}/default.log`,
-            json: true,
-            level: "debug",
+            level: "info",
             maxFiles: "20",
             maxsize: 5242880,
-            name: "default",
-            zippedArchive: true,
+            name: "file-default",
+            zippedArchive: false,
         });
     }
 
@@ -96,9 +87,9 @@ export default class AppBootstrap {
 
     private setupControllers() {
         const controllers: GenericController[] = [
-            new RequestLoggingFilter(),
+            // new RequestLoggingFilter(),
             // new JwtValidationFilter(),
-            new ResponseLoggingFilter(),
+            // new ResponseLoggingFilter(),
             new ErrorController(),
             new GenericEntityController("/api/contact", new ContactModel()),
         ];
