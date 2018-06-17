@@ -10,7 +10,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "lib": ["es6"],
-        "types": ["reflect-metadata"]
+        "types": ["mocha", "reflect-metadata"]
     },
     "include": [
         "lib/**/*.ts"

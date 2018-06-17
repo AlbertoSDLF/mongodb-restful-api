@@ -27,8 +27,7 @@ export default class GenericEntityController extends GenericController {
         const newEntity = this.model.getDbModel()(request.body);
         newEntity.save((error, createdEntity) => {
             if (error) {
-                next(new MongodbError(this.model.getName(), error.name, error.message));
-                return;
+                return next(new MongodbError(this.model.getName(), error.name, error.message));
             }
             response.status(HttpStatus.CREATED);
             response.send(createdEntity);
@@ -39,25 +38,23 @@ export default class GenericEntityController extends GenericController {
     private find = (request: Request, response: Response, next: Next): void => {
         const pageNumber: number = +request.header("page-number");
         const pageSize: number = +request.header("page-size");
-        const skip = (pageNumber - 1) * pageSize;
+        const skip: number = (pageNumber - 1) * pageSize;
         const sort: string = request.header("sort");
         const sortOrder: number = +request.header("sort-order");
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
-                next(new MongodbError(this.model.getName(), error.name, error.message));
-                return;
+                return next(new MongodbError(this.model.getName(), error.name, error.message));
             }
             response.status(HttpStatus.OK);
             response.send(foundEntities);
             next();
-        }).limit(pageSize).skip(skip).sort({ [sort]: sortOrder });
+        })/* .limit(pageSize).skip(skip).sort({ [sort]: sortOrder }) */;
     }
 
     private count = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
-                next(new MongodbError(this.model.getName(), error.name, error.message));
-                return;
+                return next(new MongodbError(this.model.getName(), error.name, error.message));
             }
             response.status(HttpStatus.OK);
             response.send({ total: Object.keys(foundEntities).length });
@@ -68,12 +65,10 @@ export default class GenericEntityController extends GenericController {
     private get = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().findById(request.params.id, (error, retrievedEntity) => {
             if (error) {
-                next(new MongodbError(this.model.getName(), error.name, error.message));
-                return;
+                return next(new MongodbError(this.model.getName(), error.name, error.message));
             }
             if (retrievedEntity === null) {
-                next(new EntityNotFoundError(this.model.getName(), request.params.id));
-                return;
+                return next(new EntityNotFoundError(this.model.getName(), request.params.id));
             }
             response.status(HttpStatus.OK);
             response.send(retrievedEntity);
@@ -84,8 +79,7 @@ export default class GenericEntityController extends GenericController {
     private exists = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().findById(request.params.id, (error, retrievedEntity) => {
             if (error) {
-                next(new MongodbError(this.model.getName(), error.name, error.message));
-                return;
+                return next(new MongodbError(this.model.getName(), error.name, error.message));
             }
             response.send(HttpStatus.NO_CONTENT);
             next();
@@ -96,12 +90,10 @@ export default class GenericEntityController extends GenericController {
         this.model.getDbModel().findOneAndUpdate({ _id: request.params.id },
             request.body, { new: true }, (error, updatedEntity) => {
                 if (error) {
-                    next(new MongodbError(this.model.getName(), error.name, error.message));
-                    return;
+                    return next(new MongodbError(this.model.getName(), error.name, error.message));
                 }
                 if (updatedEntity === null) {
-                    next(new EntityNotFoundError(this.model.getName(), request.params.id));
-                    return;
+                    return next(new EntityNotFoundError(this.model.getName(), request.params.id));
                 }
                 response.status(HttpStatus.OK);
                 response.send(updatedEntity);
@@ -112,12 +104,10 @@ export default class GenericEntityController extends GenericController {
     private delete = (request: Request, response: Response, next: Next): void => {
         this.model.getDbModel().remove({ _id: request.params.id }, (error, result) => {
             if (error) {
-                next(new MongodbError(this.model.getName(), error.name, error.message));
-                return;
+                return next(new MongodbError(this.model.getName(), error.name, error.message));
             }
             if (result.n !== 1) {
-                next(new EntityNotFoundError(this.model.getName(), request.params.id));
-                return;
+                return next(new EntityNotFoundError(this.model.getName(), request.params.id));
             }
             response.send(HttpStatus.NO_CONTENT);
             next();

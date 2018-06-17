@@ -7,11 +7,10 @@ import * as logger from "winston";
 import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
 import GenericEntityController from "./controller/genericEntityController";
-import RequestLoggingFilter from "./controller/requestLoggingFilter";
-import ResponseLoggingFilter from "./controller/responseLoggingFilter";
+import LoggingFilter from "./controller/loggingFilter";
 import ContactModel from "./model/contactModel";
 
-export default class AppBootstrap {
+class AppBootstrap {
     private server: restify.Server;
 
     public initialize(): restify.Server {
@@ -38,28 +37,27 @@ export default class AppBootstrap {
     private configureLogger(): void {
         // Remove default console logger
         logger.remove(logger.transports.Console);
-        // And add a custom one replacing it, in non Production environments
-        // if (process.env.NODE_ENV !== "production") {
-        logger.add(logger.transports.Console, {
-            json: true,
-            level: "info",
-            name: "console",
-        });
-        // }
-        const fs = require("fs");
-        const logFolder = "./log";
-        if (!fs.existsSync(logFolder)) {
-            fs.mkdirSync(logFolder);
+        if (process.env.NODE_ENV !== "Test") {
+            logger.add(logger.transports.Console, {
+                json: true,
+                level: "info",
+                name: "console",
+            });
+            const fs = require("fs");
+            const logFolder = "./log";
+            if (!fs.existsSync(logFolder)) {
+                fs.mkdirSync(logFolder);
+            }
+            logger.add(logger.transports.File, {
+                filename: `${logFolder}/node_mongodb_restify.log`,
+                json: true,
+                level: "info",
+                maxFiles: "20",
+                maxsize: 5242880,
+                name: "file-default",
+                zippedArchive: false,
+            });
         }
-        logger.add(logger.transports.File, {
-            filename: `${logFolder}/node_mongodb_restify.log`,
-            json: true,
-            level: "info",
-            maxFiles: "20",
-            maxsize: 5242880,
-            name: "file-default",
-            zippedArchive: false,
-        });
     }
 
     private setupMongoDb(): void {
@@ -87,9 +85,8 @@ export default class AppBootstrap {
 
     private setupControllers() {
         const controllers: GenericController[] = [
-            // new RequestLoggingFilter(),
             // new JwtValidationFilter(),
-            // new ResponseLoggingFilter(),
+            new LoggingFilter(),
             new ErrorController(),
             new GenericEntityController("/api/contact", new ContactModel()),
         ];
@@ -98,3 +95,5 @@ export default class AppBootstrap {
         });
     }
 }
+
+export default new AppBootstrap().initialize();

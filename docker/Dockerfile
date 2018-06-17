@@ -1,10 +1,11 @@
 FROM node:carbon
-WORKDIR /usr/src/app
 VOLUME /usr/src/app/log
-COPY package*.json ./
-RUN npm install
+WORKDIR /usr/src/app
+COPY package.json ./
+COPY ts*.json ./
 COPY ./conf ./conf
-COPY ./dist ./dist
+COPY ./lib ./lib
 COPY ./messages ./messages
+RUN npm run prod
 EXPOSE 3000
 CMD [ "npm", "start" ]

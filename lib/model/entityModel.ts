@@ -18,5 +18,4 @@ export default class EntityModel {
     public getName(): string {
         return this.name;
     }
-
 }

@@ -2,7 +2,7 @@ import { Request, Response } from "restify";
 import * as logger from "winston";
 
 export default class LoggerUtils {
-    public static writeLog(request: Request, response: Response, errorMessage: string): void {
+    public static writeLog(request: Request, errorMessage: string, statusCode: number): void {
         const customMessage = {
             "auth": request.header("Authorization"),
             "details": "",
@@ -10,7 +10,7 @@ export default class LoggerUtils {
             "method": request.method,
             "path": request.path(),
             "protocol": request.httpVersion,
-            "status-code": response.statusCode,
+            "status-code": statusCode,
             "timestamp": new Date(request.time()).toISOString(),
             "user-agent": request.userAgent(),
         };
@@ -18,12 +18,11 @@ export default class LoggerUtils {
             customMessage.details = errorMessage;
         }
         const succesStatusCodePattern = /2\d\d/g;
-        const match: RegExpExecArray = succesStatusCodePattern.exec(`${response.statusCode}`);
+        const match: RegExpExecArray = succesStatusCodePattern.exec(`${statusCode}`);
         if (match) {
             logger.info("Success", customMessage);
         } else {
             logger.error("Error", customMessage);
         }
-        return;
     }
 }
