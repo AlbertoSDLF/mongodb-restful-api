@@ -1,7 +1,9 @@
 version: '3'
+prefix: ''
 
 volumes:
-  log:
+  mongodb-restful-api_log:
+#    external: true # Error when deploying if the volume doesn't exist
 
 services:
   node_mongodb_restify:
@@ -13,7 +15,7 @@ services:
     ports:
       - "13000:3000"
     volumes:
-      - log:/usr/src/app/log
+      - mongodb-restful-api_log:/usr/src/app/log
     environment:
     - mongodbUrl=mongodb://172.17.0.2:27017/nodejs
     network_mode: bridge
@@ -24,7 +26,7 @@ services:
     container_name: Filebeat
     image: albertosdlf/mongodb-restful-api-filebeat
     volumes:
-      - log:/mnt/log
+      - mongodb-restful-api_log:/mnt/log
     stdin_open: true
     tty: true
     network_mode: bridge
