@@ -48,6 +48,7 @@
     "reflect-metadata": "^0.1.12",
     "restify": "^7.2.0",
     "restify-plugins": "^1.6.0",
+    "restify-url-semver": "^1.1.1",
     "winston": "^2.4.2"
   },
   "devDependencies": {

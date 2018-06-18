@@ -3,6 +3,7 @@ import * as i18n from "i18n";
 import * as mongoose from "mongoose";
 import * as restify from "restify";
 import * as restifyPlugins from "restify-plugins";
+import * as versioning from "restify-url-semver";
 import * as logger from "winston";
 import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
@@ -23,7 +24,10 @@ class AppBootstrap {
     }
 
     private configureServer(): void {
-        this.server = restify.createServer();
+        this.server = restify.createServer({
+            ignoreTrailingSlash: true,
+            version: "1.0.0",
+        });
         this.server.use(restify.plugins.acceptParser(["application/json"]));
         this.server.use(restifyPlugins.jsonBodyParser({ mapParams: true }));
         this.server.use(restifyPlugins.queryParser({ mapParams: true }));
@@ -84,11 +88,12 @@ class AppBootstrap {
     }
 
     private setupControllers() {
+        this.server.pre(versioning({ prefix: "/api" }));
         const controllers: GenericController[] = [
             // new JwtValidationFilter(),
             new LoggingFilter(),
             new ErrorController(),
-            new GenericEntityController("/api/contact", new ContactModel()),
+            new GenericEntityController("/contact", new ContactModel()),
         ];
         controllers.forEach((controller: GenericController) => {
             controller.createRoutes(this.server);
