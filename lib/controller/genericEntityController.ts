@@ -1,26 +1,39 @@
 import * as HttpStatus from "http-status-codes";
 import { Next, Request, Response, Server } from "restify";
 import EntityModel from "../model/entityModel";
+import Options from "./conf/options";
 import EntityNotFoundError from "./error/entityNotFoundError";
 import MongodbError from "./error/mongodbError";
 import GenericController from "./genericController";
 
 export default class GenericEntityController extends GenericController {
     private model: EntityModel;
+    private options: Options;
 
-    constructor(contextPath: string, model: EntityModel) {
+    constructor(contextPath: string, model: EntityModel, options: Options) {
         super(contextPath);
         this.model = model;
+        this.options = options;
     }
 
     public createRoutes(server: Server): void {
-        server.get(this.contextPath, this.find);
-        server.get(`${this.contextPath}/count`, this.count);
-        server.post(this.contextPath, this.add);
-        server.get(`${this.contextPath}/:id`, this.get);
-        server.get(`${this.contextPath}/:id/exists`, this.exists);
-        server.put(`${this.contextPath}/:id`, this.update);
-        server.del(`${this.contextPath}/:id`, this.delete);
+        for (const contextPath of this.getContextPaths()) {
+            server.get(contextPath, this.find);
+            server.get(`${contextPath}/count`, this.count);
+            server.post(contextPath, this.add);
+            server.get(`${contextPath}/:id`, this.get);
+            server.get(`${contextPath}/:id/exists`, this.exists);
+            server.put(`${contextPath}/:id`, this.update);
+            server.del(`${contextPath}/:id`, this.delete);
+        }
+    }
+
+    private getContextPaths(): string[] {
+        const paths: string[] = [`${this.contextPath.replace("{version}", "v" + this.options.getVersion())}`];
+        if (this.options.getIsLatest()) {
+            paths.push(`${this.contextPath.replace("/{version}", "")}`);
+        }
+        return paths;
     }
 
     private add = (request: Request, response: Response, next: Next): void => {

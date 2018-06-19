@@ -3,16 +3,18 @@ import * as i18n from "i18n";
 import * as mongoose from "mongoose";
 import * as restify from "restify";
 import * as restifyPlugins from "restify-plugins";
-import * as versioning from "restify-url-semver";
 import * as logger from "winston";
+import Options from "./controller/conf/options";
 import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
 import GenericEntityController from "./controller/genericEntityController";
 import LoggingFilter from "./controller/loggingFilter";
+import VersionFilter from "./controller/versionFilter";
 import ContactModel from "./model/contactModel";
 
 class AppBootstrap {
     private server: restify.Server;
+    private version: string;
 
     public initialize(): restify.Server {
         dotenv.config();
@@ -26,7 +28,6 @@ class AppBootstrap {
     private configureServer(): void {
         this.server = restify.createServer({
             ignoreTrailingSlash: true,
-            version: "1.0.0",
         });
         this.server.use(restify.plugins.acceptParser(["application/json"]));
         this.server.use(restifyPlugins.jsonBodyParser({ mapParams: true }));
@@ -88,12 +89,12 @@ class AppBootstrap {
     }
 
     private setupControllers() {
-        this.server.pre(versioning({ prefix: "/api" }));
+        // Version filter has to be added last, as it checks the routes registered in the application
         const controllers: GenericController[] = [
             // new JwtValidationFilter(),
             new LoggingFilter(),
             new ErrorController(),
-            new GenericEntityController("/contact", new ContactModel()),
+            new GenericEntityController("/api/{version}/contact", new ContactModel(), new Options("1.0.0", true)),
         ];
         controllers.forEach((controller: GenericController) => {
             controller.createRoutes(this.server);

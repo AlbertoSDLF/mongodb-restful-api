@@ -19,10 +19,8 @@ export default class LoggerUtils {
         }
         const succesStatusCodePattern = /2\d\d/g;
         const match: RegExpExecArray = succesStatusCodePattern.exec(`${statusCode}`);
-        if (match) {
-            logger.info("Success", customMessage);
-        } else {
-            logger.error("Error", customMessage);
-        }
+        logger.info(match ? "Success" : "Error", customMessage);
     }
 }
+
+Object.seal(LoggerUtils);
