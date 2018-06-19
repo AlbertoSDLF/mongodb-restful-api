@@ -2,14 +2,11 @@ import * as dotenv from "dotenv";
 import * as i18n from "i18n";
 import * as mongoose from "mongoose";
 import * as restify from "restify";
-import * as restifyPlugins from "restify-plugins";
 import * as logger from "winston";
-import Options from "./controller/conf/options";
+import ContactApi from "./api/contact/v1.1.0/contactApi";
 import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
 import LoggingFilter from "./controller/loggingFilter";
-import {GenericEntityController as ControllerV1_0_0} from "./controller/v1.0.0/genericEntityController";
-import ContactModel from "./model/contactModel";
 
 class AppBootstrap {
     private server: restify.Server;
@@ -29,9 +26,9 @@ class AppBootstrap {
             ignoreTrailingSlash: true,
         });
         this.server.use(restify.plugins.acceptParser(["application/json"]));
-        this.server.use(restifyPlugins.jsonBodyParser({ mapParams: true }));
-        this.server.use(restifyPlugins.queryParser({ mapParams: true }));
-        this.server.use(restifyPlugins.fullResponse());
+        this.server.use(restify.plugins.jsonBodyParser({ mapParams: true }));
+        this.server.use(restify.plugins.queryParser({ mapParams: true }));
+        this.server.use(restify.plugins.fullResponse());
         i18n.configure({
             directory: "messages",
             locales: ["en"],
@@ -88,16 +85,17 @@ class AppBootstrap {
     }
 
     private setupControllers() {
-        // Version filter has to be added last, as it checks the routes registered in the application
+        // Controllers common to all APIs in the app
         const controllers: GenericController[] = [
             // new JwtValidationFilter(),
             new LoggingFilter(),
             new ErrorController(),
-            new ControllerV1_0_0("/api/{version}/contact", new ContactModel(), true),
         ];
         controllers.forEach((controller: GenericController) => {
             controller.createRoutes(this.server);
         });
+        const contactApi110 = new ContactApi();
+        contactApi110.createRoutes(this.server);
     }
 }
 

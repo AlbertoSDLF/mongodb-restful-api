@@ -11,6 +11,7 @@ export default class ErrorController extends GenericController {
         server.on("Unauthorized", this.customMessageHandler);
         server.on("InvalidCredentials", this.customMessageHandler);
         server.on("Internal", this.customMessageHandler);
+        server.on("VersionNotAllowed", this.customMessageHandler);
         server.on("NotFound", (request: Request, response: Response, error, cb): void => {
             response.statusCode = HttpStatus.NOT_FOUND;
             if (error instanceof EntityNotFoundError) {

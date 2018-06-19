@@ -45,9 +45,9 @@
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.0.14",
     "nodemon": "^1.17.3",
+    "path-match": "^1.2.4",
     "reflect-metadata": "^0.1.12",
     "restify": "^7.2.0",
-    "restify-plugins": "^1.6.0",
     "winston": "^2.4.2"
   },
   "devDependencies": {
