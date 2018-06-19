@@ -5,16 +5,21 @@ import EntityNotFoundError from "./error/entityNotFoundError";
 import MongodbError from "./error/mongodbError";
 import GenericController from "./genericController";
 
-export default abstract class EntityController {
+export default abstract class EntityController extends GenericController {
     protected model: EntityModel;
-    protected versions: string[];
+    protected contextPath: string;
+    protected versions: string[] = [];
 
-    constructor(model: EntityModel) {
-         this.model = model;
+    constructor(contextPath: string, model: EntityModel) {
+        super(contextPath);
+        this.contextPath = contextPath;
+        this.model = model;
     }
 
-    public getVersions(): string[] {
-        return this.versions;
+    public abstract createRoutes(server: Server): void;
+
+    public addVersion(version: string): void {
+        this.versions.push(version);
     }
 
     public add = (request: Request, response: Response, next: Next): void => {
@@ -30,11 +35,6 @@ export default abstract class EntityController {
     }
 
     public find = (request: Request, response: Response, next: Next): void => {
-        const pageNumber: number = +request.header("page-number");
-        const pageSize: number = +request.header("page-size");
-        const skip: number = (pageNumber - 1) * pageSize;
-        const sort: string = request.header("sort");
-        const sortOrder: number = +request.header("sort-order");
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
                 return next(new MongodbError(this.model.getName(), error.name, error.message));
@@ -42,7 +42,7 @@ export default abstract class EntityController {
             response.status(HttpStatus.OK);
             response.send(foundEntities);
             next();
-        })/* .limit(pageSize).skip(skip).sort({ [sort]: sortOrder }) */;
+        });
     }
 
     public count = (request: Request, response: Response, next: Next): void => {

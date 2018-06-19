@@ -3,7 +3,7 @@ import * as i18n from "i18n";
 import * as mongoose from "mongoose";
 import * as restify from "restify";
 import * as logger from "winston";
-import ContactApi from "./api/contact/v1.1.0/contactApi";
+import { ContactController as ContactControllerV110 } from "./controller/contact/v1.1.0/contactController";
 import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
 import LoggingFilter from "./controller/loggingFilter";
@@ -90,12 +90,11 @@ class AppBootstrap {
             // new JwtValidationFilter(),
             new LoggingFilter(),
             new ErrorController(),
+            new ContactControllerV110("/api/contact"),
         ];
         controllers.forEach((controller: GenericController) => {
             controller.createRoutes(this.server);
         });
-        const contactApi110 = new ContactApi();
-        contactApi110.createRoutes(this.server);
     }
 }
 

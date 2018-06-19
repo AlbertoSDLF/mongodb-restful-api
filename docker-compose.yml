@@ -1,17 +1,18 @@
 version: '3'
-prefix: ''
 
 volumes:
   mongodb-restful-api_log:
-#    external: true # Error when deploying if the volume doesn't exist
+    external: true # Error when deploying if the volume doesn't exist
 
 services:
   node_mongodb_restify:
     build: 
       context: .
       dockerfile: ./docker/Dockerfile
-    container_name: Node_Mongodb_Restify
-    image: albertosdlf/mongodb-restful-api
+      args:
+        buildno: 1.1.0
+    container_name: Node_Mongodb_Restify_1_1_0
+    image: albertosdlf/mongodb-restful-api:1.1.0
     ports:
       - "13000:3000"
     volumes:
@@ -23,8 +24,10 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-filebeat
-    container_name: Filebeat
-    image: albertosdlf/mongodb-restful-api-filebeat
+      args:
+        buildno: 1.0.0
+    container_name: Filebeat_1_1_0
+    image: albertosdlf/mongodb-restful-api-filebeat:1.0.0
     volumes:
       - mongodb-restful-api_log:/mnt/log
     stdin_open: true

@@ -6,6 +6,7 @@ export default class LoggingFilter extends GenericController {
     public createRoutes(server: Server) {
         server.on("after", (request: Request, response: Response, route, error): void => {
             const customMessage = {
+                "api-version": response.getHeader("api-version"),
                 "auth": request.header("Authorization"),
                 "details": "",
                 "ip": request.connection.remoteAddress,
