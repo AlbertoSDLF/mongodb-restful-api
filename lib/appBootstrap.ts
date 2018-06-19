@@ -7,9 +7,8 @@ import * as logger from "winston";
 import Options from "./controller/conf/options";
 import ErrorController from "./controller/errorController";
 import GenericController from "./controller/genericController";
-import GenericEntityController from "./controller/genericEntityController";
 import LoggingFilter from "./controller/loggingFilter";
-import VersionFilter from "./controller/versionFilter";
+import {GenericEntityController as ControllerV1_0_0} from "./controller/v1.0.0/genericEntityController";
 import ContactModel from "./model/contactModel";
 
 class AppBootstrap {
@@ -94,7 +93,7 @@ class AppBootstrap {
             // new JwtValidationFilter(),
             new LoggingFilter(),
             new ErrorController(),
-            new GenericEntityController("/api/{version}/contact", new ContactModel(), new Options("1.0.0", true)),
+            new ControllerV1_0_0("/api/{version}/contact", new ContactModel(), true),
         ];
         controllers.forEach((controller: GenericController) => {
             controller.createRoutes(this.server);

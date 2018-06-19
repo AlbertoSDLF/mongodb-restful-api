@@ -1,19 +1,16 @@
 import * as HttpStatus from "http-status-codes";
 import { Next, Request, Response, Server } from "restify";
-import EntityModel from "../model/entityModel";
-import Options from "./conf/options";
-import EntityNotFoundError from "./error/entityNotFoundError";
-import MongodbError from "./error/mongodbError";
-import GenericController from "./genericController";
+import EntityModel from "../../model/entityModel";
+import Options from "../conf/options";
+import EntityNotFoundError from "../error/entityNotFoundError";
+import MongodbError from "../error/mongodbError";
+import { GenericEntityController as ControllerV1_0_0} from "../V1.0.0/genericEntityController";
 
-export default class GenericEntityController extends GenericController {
-    private model: EntityModel;
-    private options: Options;
-
-    constructor(contextPath: string, model: EntityModel, options: Options) {
+export class GenericEntityController extends ControllerV1_0_0 {
+    constructor(contextPath: string, model: EntityModel, isLatest: boolean) {
         super(contextPath);
         this.model = model;
-        this.options = options;
+        this.options = new Options("1.0.0", isLatest);
     }
 
     public createRoutes(server: Server): void {
