@@ -74,7 +74,7 @@ class AppBootstrap {
             logger.info("DB connection finished");
         });
         mongoose.connect(process.env.mongodbUrl, {
-            autoIndex: false, // Don't build indexes
+            autoIndex: false, // Don"t build indexes
             bufferCommands: 0,
             bufferMaxEntries: 0, // If not connected, return errors immediately rather than waiting for reconnect
             keepAlive: 200,
@@ -85,7 +85,6 @@ class AppBootstrap {
     }
 
     private setupControllers() {
-        // Controllers common to all APIs in the app
         const controllers: GenericController[] = [
             // new JwtValidationFilter(),
             new LoggingFilter(),

@@ -23,7 +23,7 @@ export class ContactController extends ContactControllerV1_0_0 {
         server.get("/api/contact/:id", plugins.conditionalHandler([
             { version: this.versions, handler: this.get },
         ]));
-        server.get("/api/contact/:id/:id/exists", plugins.conditionalHandler([
+        server.get("/api/contact/:id/exists", plugins.conditionalHandler([
             { version: this.versions, handler: this.exists },
         ]));
         server.put("/api/contact/:id", plugins.conditionalHandler([
