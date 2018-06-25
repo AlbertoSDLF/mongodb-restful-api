@@ -40,6 +40,10 @@ export class ContactController extends ContactControllerV1_0_0 {
         const skip: number = (pageNumber - 1) * pageSize;
         const sort: string = request.header("sort");
         const sortOrder: number = +request.header("sort-order");
+        let sortConf;
+        if (sort) {
+            sortConf = { [sort]: sortOrder ? sortOrder : 1};
+        }
         this.model.getDbModel().find({}, (error, foundEntities) => {
             if (error) {
                 return next(new MongodbError(this.model.getName(), error.name, error.message));
@@ -47,6 +51,6 @@ export class ContactController extends ContactControllerV1_0_0 {
             response.status(HttpStatus.OK);
             response.send(foundEntities);
             next();
-        }).limit(pageSize).skip(skip).sort({ [sort]: sortOrder });
+        }).limit(pageSize).skip(skip).sort(sortConf);
     }
 }

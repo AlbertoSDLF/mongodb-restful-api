@@ -1,0 +1,12 @@
+- module: logstash
+  log:
+    enabled: true
+    var.paths:
+      - /mnt/log/*.log
+    
+  # Slow logs
+  slowlog:
+   enabled: true
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    #var.paths:

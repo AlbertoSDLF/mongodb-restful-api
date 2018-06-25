@@ -9,14 +9,7 @@ filebeat.config:
 processors:
 - add_cloud_metadata:
 
-filebeat.modules:
-  - module: logstash
-    log:
-      enabled: true
-      var.paths:
-        - /mnt/log/*.log
-
 output.logstash:
   enabled: true
-  hosts: ["172.17.0.10:5044"]
+  hosts: ["172.17.0.13:5044"]
   worker: 1
